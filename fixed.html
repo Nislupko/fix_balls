@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Balls</title>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: #efefef;
+        }
+
+        .circle {
+            background: #444;
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 100px;
+        }
+
+        .circle-shadow {
+            background: #ddd;
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 100px;
+        }
+        .transition {
+            transition: all .3s;
+        }
+
+    </style>
+
+</head>
+<body>
+</body>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" crossorigin="anonymous"></script>
+<script>
+    /**
+     * Изменения:
+     * - Синтакис ES6: const/let, стрелочные функции, литеральные строки
+     * - Добавлено несколько переменных для упрощения восприятия кода и его масштабируемости
+     * - Большой тернарный оператор заменен более простым для восприятия if-else блоком
+     * - У .circle shadow удалены атрибуты data-x/data-y(не используются)
+     * - Класс "transition" добавляется при создании div-элемента и далее не удаляется
+     * - Блок с time-out заменен на код, используемый внутри него
+     * */
+    const body = $("body")
+    const screenHeight = body.height(),
+          screenWidth =  body.width()
+    const ballArea = 60
+    for (let x=0;x<screenWidth;x+=ballArea){
+        for (let y=0; y<screenHeight;y+=ballArea){
+            $("body").append(` <div class ='circle-shadow'
+                                    style='top:${y}px;left:${x}px'>
+                               </div>`);
+            $("body").append(` <div class='circle transition'
+                                    data-x='${x}'
+                                    data-y='${y}'
+                                    style='top:${y}px;left:${x}px'>
+                               </div>`);
+        }
+    }
+    const ballRadius = $(".circle")? $(".circle:eq(0)").width(): 0
+    try {
+        $(window).on("mousemove", document => {
+            $('.circle').each(index=>{
+                const   elem = $(`.circle:eq(${index})`),
+                        x0 = elem.data("x"),
+                        y0 = elem.data("y"),
+                        dx = document.clientX-x0,
+                        dy = document.clientY-y0
+
+                if (Math.sqrt(dx*dx+dy*dy)<ballRadius) {
+                    elem.css({
+                        left:x0-dx+"px",
+                        top:y0-dy+"px"
+                    })
+                } else {
+                    elem.css({
+                        left:x0+"px",
+                        top:y0+"px"
+                    })
+                }
+            })
+        })
+    } catch(error) {
+        console.log(`Error ${error.name}: ${error.message} \n`)
+    }
+</script>
+</html>
